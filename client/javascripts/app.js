@@ -87,11 +87,10 @@ var main = function (toDoObjects) {
                         tags = $tagInput.val().split(","),
                         newToDo = {"description":description, "tags":tags};
 
-                    $.post("todos", newToDo, function (result) {
-                        console.log(result);
-                        socket.emit("new todo", newToDo);
+                    socket.emit("add todo", newToDo);
 
-                        //toDoObjects.push(newToDo);
+                    socket.on("return todos", function(result){
+                        console.log(result);
                         toDoObjects = result;
 
                         // update toDos
