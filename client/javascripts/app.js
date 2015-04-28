@@ -15,27 +15,35 @@ var main = function (toDoObjects) {
             $content,
             $tag,
             $tagName;
+
+        toDos.push(todo.description);
         
         if(contentType === "content-newest"){
-            $content = $("#content-newest ul");
-            $content.prepend($("<li>").text(todo.description));
+            $content = $("<li>").text(todo.description).hide();
+            $("#content-newest ul").prepend($content);
+            $content.slideDown("slow");
         } else if (contentType === "content-oldest"){
-            $content = $("#content-oldest ul");
-            $content.append($("<li>").text(todo.description));
+            $content = $("<li>").text(todo.description).hide();
+            $("#content-oldest ul").append($content);
+            $content.slideDown("slow");
         } else if ( contentType === "content-tags"){
             todo.tags.forEach(function(tag){
                 $tag = $("#content-tags #tag-"+tag);
                 if($tag.attr("id")){
                     console.log("Adding todo with existing tag");
-                    $tag.append($("<li>").text(todo.description));
+                    $content = $("<li>").text(todo.description).hide();
+                    $tag.append($content);
+                    $content.slideDown("slow");
                 }
                 else{
                     console.log("Unused tag entered, creating new tag");
-                    $tagName = $("<h3>").text(tag);
+                    $tagName = $("<h3>").text(tag).hide();
                     $content = $("<ul>").attr("id", "tag-"+tag);
-                    $content.append($("<li>").text(todo.description));
+                    $content.append($("<li>").text(todo.description)).hide();
                     $("#content-tags").append($tagName);
                     $("#content-tags").append($content);
+                    $tagName.slideDown("slow");
+                    $content.slideDown("slow");
                 }
             });
         }
@@ -96,12 +104,11 @@ var main = function (toDoObjects) {
 
                 console.log(tagObjects);
 
+                $("main .content").attr("id", "content-tags");
+
                 tagObjects.forEach(function (tag) {
                     var $tagName = $("<h3>").text(tag.name),
                         $content = $("<ul>").attr("id", "tag-"+tag.name);
-
-                    $("main .content").attr("id", "content-tags");
-
 
                     tag.toDos.forEach(function (description) {
                         var $li = $("<li>").text(description);
@@ -112,12 +119,14 @@ var main = function (toDoObjects) {
                     $("main .content").append($content);
                 });
 
-            } else if ($element.parent().is(":nth-child(4)")) {
-                var $input = $("<input>").addClass("description"),
-                    $inputLabel = $("<p>").text("Description: "),
+            } else if ($element.parent().is(":nth-child(4)")) {                    
+                var $inputLabel = $("<p>").text("Description: "),
                     $tagInput = $("<input>").addClass("tags"),
-                    $tagLabel = $("<p>").text("Tags: "),
+                    $tagLabel = $("<p>").text("Tags: ");
+                    $input = $("<input>").addClass("description");
                     $button = $("<span>").text("+");
+
+                $("main .content").attr("id", "content-add");
 
                 $button.on("click", function () {
                     var description = $input.val(),
