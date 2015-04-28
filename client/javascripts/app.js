@@ -17,6 +17,7 @@ var main = function (toDoObjects) {
             $tagName;
 
         toDos.push(todo.description);
+        toDoObjects.push(todo);
         
         if(contentType === "content-newest"){
             $content = $("<li>").text(todo.description).hide();
