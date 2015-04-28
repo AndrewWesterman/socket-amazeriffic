@@ -10,6 +10,39 @@ var main = function (toDoObjects) {
           return toDo.description;
     });
 
+    socket.on("add todo", function(todo){
+        var contentType = $("main .content").attr("id"),
+            $content,
+            $tag,
+            $tagName;
+        
+        if(contentType === "content-newest"){
+            $content = $("#content-newest ul");
+            $content.prepend($("<li>").text(todo.description));
+        } else if (contentType === "content-oldest"){
+            $content = $("#content-oldest ul");
+            $content.append($("<li>").text(todo.description));
+        } else if ( contentType === "content-tags"){
+            todo.tags.forEach(function(tag){
+                $tag = $("#content-tags #tag-"+tag);
+                if($tag.attr("id")){
+                    console.log("Adding todo with existing tag");
+                    $tag.append($("<li>").text(todo.description));
+                }
+                else{
+                    console.log("Unused tag entered, creating new tag");
+                    $tagName = $("<h3>").text(tag);
+                    $content = $("<ul>").attr("id", "tag-"+tag);
+                    $content.append($("<li>").text(todo.description));
+                    $("#content-tags").append($tagName);
+                    $("#content-tags").append($content);
+                }
+            });
+        }
+    });
+
+
+
     $(".tabs a span").toArray().forEach(function (element) {
         var $element = $(element);
 
@@ -26,11 +59,13 @@ var main = function (toDoObjects) {
 
             if ($element.parent().is(":nth-child(1)")) {
                 $content = $("<ul>");
+                $("main .content").attr("id","content-newest");
                 for (i = toDos.length-1; i >= 0; i--) {
                     $content.append($("<li>").text(toDos[i]));
                 }
             } else if ($element.parent().is(":nth-child(2)")) {
                 $content = $("<ul>");
+                $("main .content").attr("id","content-oldest");
                 toDos.forEach(function (todo) {
                     $content.append($("<li>").text(todo));
                 });
@@ -63,7 +98,9 @@ var main = function (toDoObjects) {
 
                 tagObjects.forEach(function (tag) {
                     var $tagName = $("<h3>").text(tag.name),
-                        $content = $("<ul>");
+                        $content = $("<ul>").attr("id", "tag-"+tag.name);
+
+                    $("main .content").attr("id", "content-tags");
 
 
                     tag.toDos.forEach(function (description) {
